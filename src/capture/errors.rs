@@ -8,6 +8,8 @@ pub enum CaptureError {
     IO(#[from] std::io::Error),
     #[error("Bad Metadata: {0}")]
     BadMetadata(String),
+    #[error(transparent)]
+    Conversion(#[from] ConversionError),
 }
 
 #[derive(Debug, Error)]

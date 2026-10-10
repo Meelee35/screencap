@@ -7,6 +7,8 @@ use crate::config::Config;
 pub struct Args {
     #[arg(short, long)]
     pub savedirectory: Option<PathBuf>,
+    #[arg(short, long)]
+    pub clipboard: bool
 }
 
 

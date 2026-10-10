@@ -18,6 +18,16 @@ pub struct Capture {
     pub timestamp: SystemTime,
 }
 
+impl Default for Capture {
+    fn default() -> Self {
+        Self {
+            image: image::RgbaImage::new(0, 0),
+            scale: 1.0,
+            timestamp: SystemTime::UNIX_EPOCH,
+        }
+    }
+}
+
 impl TryFrom<RawCapture> for Capture {
     type Error = ConversionError;
 

@@ -4,12 +4,18 @@ use thiserror::Error;
 #[derive(Serialize, Deserialize, Default)]
 #[serde(default)]
 pub struct State {
-    pub save_directory: Option<String>,
-    pub show_notification: bool,
+    pub last_mode: Mode
+}
+
+#[derive(Clone, Copy, Serialize, Deserialize, Default)]
+pub enum Mode {
+    Fullscreen,
+    #[default]
+    Rectangle
 }
 
 
-fn load() -> Result<State, confy::ConfyError> {
+pub fn load() -> Result<State, confy::ConfyError> {
     confy::load("io.github.meelees.screencap", Some("store"))
 }
 

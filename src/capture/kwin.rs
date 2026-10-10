@@ -4,7 +4,11 @@ use std::os::fd::AsFd;
 use zbus::blocking::Connection;
 use zbus::zvariant::{Fd, OwnedValue, Value};
 use crate::capture::errors::CaptureError;
-use crate::capture::pixels::RawCapture;
+use crate::capture::pixels::{Capture, RawCapture};
+
+pub fn capture() -> Result<Capture, CaptureError> {
+    Ok(Capture::try_from(capture_workspace()?)?)
+}
 
 pub fn capture_workspace() -> Result<RawCapture, CaptureError> {
     let conn = Connection::session()?;

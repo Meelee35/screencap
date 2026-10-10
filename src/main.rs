@@ -13,7 +13,10 @@ pub mod constants;
 
 fn main() -> ExitCode {
     log!("Screencap version {}", constants::VERSION);
-    log!("Starting app...");
+
+    app::run::run().unwrap_or_else(|err| {
+        output::dialogue::error(&err.to_string())
+    });
 
     ExitCode::from(0)
 }
