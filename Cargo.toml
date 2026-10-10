@@ -1,0 +1,18 @@
+[package]
+name = "screencap"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+thiserror = "2.0.21"
+zbus = "5.19.0"
+os_pipe = "1.2.3"
+anyhow = "1.0.104"
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+slint = { version = "1.18.1", features = ["backend-qt"] }
+
+[build-dependencies]
+slint-build = "1"
+
+[profile.dev.package."*"]
+opt-level = 3

@@ -1,0 +1,32 @@
+import { Button, Palette } from "std-widgets.slint";
+
+export enum CaptureMode { rectangle, fullscreen }
+
+export component Toolbar inherits Rectangle {
+    in-out property <CaptureMode> mode: CaptureMode.rectangle;
+    callback mode-changed(CaptureMode);
+
+    width: layout.preferred-width;
+    height: layout.preferred-height;
+
+    background: Palette.background;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: Palette.border;
+
+    layout := HorizontalLayout {
+        padding: 8px;
+        spacing: 8px;
+
+        Button {
+            text: "Rectangle";
+            primary: root.mode == CaptureMode.rectangle;
+            clicked => { root.mode = CaptureMode.rectangle; root.mode-changed(root.mode); }
+        }
+        Button {
+            text: "Fullscreen";
+            primary: root.mode == CaptureMode.fullscreen;
+            clicked => { root.mode = CaptureMode.fullscreen; root.mode-changed(root.mode); }
+        }
+    }
+}

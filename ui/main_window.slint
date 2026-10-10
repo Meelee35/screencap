@@ -1,0 +1,23 @@
+import { Toolbar, CaptureMode } from "toolbar.slint";
+
+export component MainWindow inherits Window {
+    in property <image> capture;
+    callback mode-changed(CaptureMode);
+
+    full-screen: true;
+    no-frame: true;
+    background: black;
+
+    Image {
+        source: root.capture;
+        width: 100%;
+        height: 100%;
+        image-fit: fill;
+    }
+
+    Toolbar {
+        y: 24px;
+        x: (root.width - self.width) / 2;
+        mode-changed(m) => { root.mode-changed(m); }
+    }
+}
