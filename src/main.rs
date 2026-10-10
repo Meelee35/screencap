@@ -1,25 +1,19 @@
-use crate::capture::kwin::capture_workspace;
-use crate::capture::pixels::Capture;
-use std::path::PathBuf;
-
-slint::include_modules!();
-
+use crate::logging::START;
+use std::process::ExitCode;
+#[macro_use]
+mod logging;
 pub mod capture;
 pub mod ui;
 pub mod app;
 
-fn main() -> anyhow::Result<()> {
-    let raw_capture = capture_workspace()?;
-    let capture = Capture::try_from(raw_capture)?;
-    capture.image.save(PathBuf::from("capture.png"))?;
-    
-    run().expect("TODO: panic message");
-    
-    Ok(())
-}
+pub mod output;
+pub mod config;
+pub mod persistent;
+pub mod constants;
 
-fn run() -> anyhow::Result<()> {
-    let window = MainWindow::new()?;
-    window.run()?;
-    Ok(())
+fn main() -> ExitCode {
+    log!("Screencap version {}", constants::VERSION);
+    log!("Starting app...");
+
+    ExitCode::from(0)
 }

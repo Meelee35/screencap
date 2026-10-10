@@ -10,6 +10,10 @@ os_pipe = "1.2.3"
 anyhow = "1.0.104"
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 slint = { version = "1.18.1", features = ["backend-qt"] }
+dirs = "7.0.0"
+clap = { version = "4.6.7", features = ["derive"] }
+confy = "2.0.0"
+serde = { version = "1.0.229", features = ["derive"] }
 
 [build-dependencies]
 slint-build = "1"
