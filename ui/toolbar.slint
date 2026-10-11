@@ -4,18 +4,21 @@ export enum CaptureMode { rectangle, fullscreen }
 
 export component Toolbar inherits Rectangle {
     in-out property <CaptureMode> mode: CaptureMode.rectangle;
+    in property <bool> transparent;
     callback mode-changed(CaptureMode);
 
     width: layout.preferred-width;
     height: layout.preferred-height;
 
+    opacity: transparent ? 0 : 1;
+    animate opacity { duration: 150ms; }
     background: Palette.background;
     border-radius: 24px;
     border-width: 1px;
     border-color: Palette.border;
 
     TouchArea {
-
+        // this is just empty so clicking the toolbar doesn't click the actual image
     }
 
     layout := HorizontalLayout {

@@ -116,9 +116,10 @@ export component MainWindow inherits Window {
         }
 
         Toolbar {
-            y: 24px;
+            y: 8px;
             x: (root.width - self.width) / 2;
             mode <=> root.mode;
+            transparent: root.drag-active;
             mode-changed(m) => { root.mode-changed(m); }
         }
     }

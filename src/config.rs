@@ -1,4 +1,3 @@
-use crate::config::cli::Args;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 

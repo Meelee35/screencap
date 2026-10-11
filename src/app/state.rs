@@ -105,6 +105,7 @@ impl AppState {
 
     pub fn close(&self) {
         if let Some(view) = &self.view {
+            log!("Closing window");
             view.close();
         }
     }
