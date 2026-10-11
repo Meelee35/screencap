@@ -7,7 +7,7 @@ pub struct MainWindowView {
 }
 
 #[derive(Clone)]
-pub(crate) struct ViewHandle {
+pub struct ViewHandle {
     window: slint::Weak<MainWindow>,
 }
 
