@@ -93,32 +93,32 @@ impl AppState {
     }
 
     pub fn capture_fullscreen(&self, config: &Config) -> anyhow::Result<Saved> {
-        self.save(config, &self.capture)
+        self.save(config)
     }
 
     pub fn capture_rectangle(
-        &self,
+        &mut self,
         config: &Config,
         rectangle: &Rectangle,
     ) -> anyhow::Result<Saved> {
         if let Some(selection) = rectangle.selection {
-            let capture =
+            self.capture =
                 self.capture
                     .crop(selection.x, selection.y, selection.width, selection.height);
-            self.save(config, &capture)
+            self.save(config)
         } else {
             Ok(Saved(vec![]))
         }
     }
 
-    fn save(&self, config: &Config, capture: &Capture) -> anyhow::Result<Saved> {
+    fn save(&self, config: &Config) -> anyhow::Result<Saved> {
         let mut save_types = vec![];
         if let Some(save_dir) = config.save_directory.clone() {
-            output::save::save_capture(&save_dir, capture)?;
+            output::save::save_capture(&save_dir, &self.capture)?;
             save_types.push(SaveType::File(save_dir));
         }
         if config.clipboard {
-            output::clipboard::copy_capture(capture)?;
+            output::clipboard::copy_capture(&self.capture)?;
             save_types.push(SaveType::Clipboard);
         }
 

@@ -68,11 +68,16 @@ pub fn run() -> anyhow::Result<()> {
     log!("Showing window");
     window.run()?;
 
-    if let Some(action) = app_state.borrow().action_requested.clone() {
+    let capture_state = state.clone();
+    let action = capture_state
+        .upgrade()
+        .and_then(|final_state| final_state.borrow().action_requested.clone());
+
+    if let Some(action) = action {
         let result = match action {
             CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(&config),
             CaptureMode::Rectangle(rectangle) => {
-                app_state.borrow().capture_rectangle(&config, &rectangle)
+                app_state.borrow_mut().capture_rectangle(&config, &rectangle)
             }
         };
 
