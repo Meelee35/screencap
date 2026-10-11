@@ -6,6 +6,19 @@ pub struct MainWindowView {
     window: MainWindow,
 }
 
+#[derive(Clone)]
+pub(crate) struct ViewHandle {
+    window: slint::Weak::<MainWindow>
+}
+
+impl ViewHandle {
+    pub(crate) fn close(&self) {
+        if let Some(window) = self.window.upgrade() {
+            let _ = window.hide();
+        }
+    }
+}
+
 impl MainWindowView {
     pub fn new(initial_mode: Mode) -> Result<Self, slint::PlatformError> {
         let window = MainWindow::new()?;
@@ -14,6 +27,12 @@ impl MainWindowView {
             Mode::Fullscreen => CaptureMode::Fullscreen,
         });
         Ok(Self { window })
+    }
+
+    pub(crate) fn handle(&self) -> ViewHandle {
+        ViewHandle {
+            window: self.window.as_weak()
+        }
     }
 
     pub fn set_capture(&self, image: image::RgbaImage) {
@@ -53,9 +72,5 @@ impl MainWindowView {
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
         self.window.run()
-    }
-
-    pub fn close(&self) {
-        let _ = self.window.hide();
     }
 }

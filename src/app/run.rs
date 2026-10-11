@@ -18,13 +18,24 @@ pub fn run() -> anyhow::Result<()> {
     log!("Setting up window");
     let window = MainWindowView::new(persistent_state.last_mode)?;
     window.set_capture(app_state.borrow().capture.image.clone());
+
+    let state = Rc::downgrade(&app_state);
+    let view = window.handle();
+
+    let mode_state = state.clone();
     window.on_mode_changed(move |mode| {
-        app_state.borrow_mut().mode = mode.into();
+        if let Some(state) = mode_state.upgrade() {
+            state.borrow_mut().mode = mode.into();
+        }
     });
-    window.on_cancel_requested(|| {
+
+    let cancel_state = state.clone();
+    window.on_cancel_requested(move || {
         log!("Cancel requested");
-        window.close();
-        app_state.borrow_mut().cancelled = true;
+        view.close();
+        if let Some(state) = cancel_state.upgrade() {
+            state.borrow_mut().cancelled = true;
+        }
     });
 
     log!("Showing window");
