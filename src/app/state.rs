@@ -10,16 +10,16 @@ pub struct AppState {
     pub capture: Capture,
     pub mode: CaptureMode,
     pub view: Option<ViewHandle>,
-    pub requested_action: Option<Vec<SaveType>>
+    pub action_requested: Option<CaptureMode>
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum CaptureMode {
     Fullscreen,
     Rectangle(Rectangle),
 }
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug)]
 pub struct Rectangle {
     pub selection: Option<Rect>,
 }
@@ -93,13 +93,26 @@ impl AppState {
     }
 
     pub fn capture_fullscreen(&self, config: &Config) -> anyhow::Result<Saved> {
+        self.save(config, &self.capture)
+    }
+
+    pub fn capture_rectangle(&self, config: &Config, rectangle: &Rectangle) -> anyhow::Result<Saved> {
+        if let Some(selection) = rectangle.selection {
+            let capture = self.capture.crop(selection.x, selection.y, selection.width, selection.height);
+            self.save(config, &capture)
+        } else {
+            Ok(Saved(vec![]))
+        }
+    }
+
+    fn save(&self, config: &Config, capture: &Capture) -> anyhow::Result<Saved> {
         let mut save_types = vec![];
         if let Some(save_dir) = config.save_directory.clone() {
-            output::save::save_capture(&save_dir, &self.capture)?;
+            output::save::save_capture(&save_dir, capture)?;
             save_types.push(SaveType::File(save_dir));
         }
         if config.clipboard {
-            output::clipboard::copy_capture(&self.capture)?;
+            output::clipboard::copy_capture(capture)?;
             save_types.push(SaveType::Clipboard);
         }
 

@@ -1,8 +1,7 @@
 use std::cell::RefCell;
-use std::path::PathBuf;
 use std::rc::Rc;
 use crate::{capture, config, output, persistent};
-use crate::app::state::{AppState, SaveType};
+use crate::app::state::{AppState, CaptureMode, Rect, Rectangle};
 use crate::ui::main_window::MainWindowView;
 
 pub fn run() -> anyhow::Result<()> {
@@ -42,38 +41,46 @@ pub fn run() -> anyhow::Result<()> {
     window.on_capture_requested(move || {
         log!("Capture requested");
         if let Some(state) = capture_state.upgrade() {
+            let mode = state.borrow().mode.clone();
             state.borrow().close();
-            state.borrow_mut().requested_action.get_or_insert_with(Vec::new).push(SaveType::File(PathBuf::new()));
+            state.borrow_mut().action_requested = Some(mode);
+        }
+    });
+
+    let region_state = state.clone();
+    window.on_region_requested(move |x, y, w, h| {
+        log!("Region requested");
+        if let Some(state) = region_state.upgrade() {
+            let mode = CaptureMode::Rectangle(Rectangle {
+                selection: Some(Rect { x, y, width: w, height: h }),
+            });
+            state.borrow_mut().mode = mode.clone();
+            state.borrow().close();
+            state.borrow_mut().action_requested = Some(mode);
         }
     });
 
     log!("Showing window");
     window.run()?;
 
-    if let Some(actions) = &app_state.borrow().requested_action {
-        for action in actions {
-            match action {
-                SaveType::Clipboard => {
-                    todo!()
-                }
-                SaveType::File(_) => {
-                    match app_state.borrow().capture_fullscreen(&config) {
-                        Ok(saved) => {
-                            let save_types = &saved.0;
-                            if save_types.is_empty() {
-                                output::notify::warning("No save method was specified, so nothing was saved.")
-                            } else {
-                                let message = saved.build_summary();
-                                output::notify::success(&message, &app_state.borrow().capture);
-                            }
-                            output::notify::wait()
-                        }
-                        Err(e) => {
-                            output::dialogue::error(&format!("Failed to save screen: {:#}", e));
-                        }
+    if let Some(action) = app_state.borrow().action_requested.clone() {
+        let result = match action {
+            CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(&config),
+            CaptureMode::Rectangle(rectangle) => app_state.borrow().capture_rectangle(&config, &rectangle),
+        };
 
-                    };
+        match result {
+            Ok(saved) => {
+                if saved.0.is_empty() {
+                    output::notify::warning("No save method was specified, so nothing was saved.")
+                } else {
+                    let message = saved.build_summary();
+                    output::notify::success(&message, &app_state.borrow().capture);
                 }
+                output::notify::wait()
+            }
+            Err(e) => {
+                output::dialogue::error(&format!("Failed to save screen: {:#}", e));
             }
         }
     }

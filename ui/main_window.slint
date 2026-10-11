@@ -41,39 +41,29 @@ export component MainWindow inherits Window {
         }
 
         Rectangle {
-            x: 0;
-            y: 0;
-            width: root.width;
-            height: root.drag-y;
+            width: 100%;
+            height: 100%;
             visible: root.drag-active;
             background: #00000080;
         }
 
         Rectangle {
-            x: 0;
-            y: root.drag-y + root.drag-h;
-            width: root.width;
-            height: root.height - root.drag-y - root.drag-h;
-            visible: root.drag-active;
-            background: #00000080;
-        }
-
-        Rectangle {
-            x: 0;
+            x: root.drag-x;
             y: root.drag-y;
-            width: root.drag-x;
+            width: root.drag-w;
             height: root.drag-h;
             visible: root.drag-active;
-            background: #00000080;
-        }
+            border-radius: 12px;
+            clip: true;
 
-        Rectangle {
-            x: root.drag-x + root.drag-w;
-            y: root.drag-y;
-            width: root.width - root.drag-x - root.drag-w;
-            height: root.drag-h;
-            visible: root.drag-active;
-            background: #00000080;
+            Image {
+                source: root.capture;
+                x: -root.drag-x;
+                y: -root.drag-y;
+                width: root.width;
+                height: root.height;
+                image-fit: fill;
+            }
         }
 
         Rectangle {

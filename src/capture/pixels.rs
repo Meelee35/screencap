@@ -29,6 +29,22 @@ impl Default for Capture {
     }
 }
 
+impl Capture {
+    pub fn crop(&self, x: f64, y: f64, width: f64, height: f64) -> Self {
+        let scale = self.scale;
+        let px = (x * scale).round().max(0.0) as u32;
+        let py = (y * scale).round().max(0.0) as u32;
+        let pw = (width * scale).round().max(0.0) as u32;
+        let ph = (height * scale).round().max(0.0) as u32;
+
+        Self {
+            image: image::imageops::crop_imm(&self.image, px, py, pw, ph).to_image(),
+            scale,
+            timestamp: self.timestamp,
+        }
+    }
+}
+
 impl TryFrom<RawCapture> for Capture {
     type Error = ConversionError;
 
