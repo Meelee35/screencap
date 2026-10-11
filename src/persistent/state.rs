@@ -1,4 +1,6 @@
+use crate::constants;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Default)]
 #[serde(default)]
@@ -14,11 +16,21 @@ pub enum Mode {
 }
 
 pub fn load() -> Result<State, confy::ConfyError> {
-    confy::load("io.github.meelees.screencap", Some("store"))
+    confy::load_path(path())
 }
 
 impl State {
-    pub fn save(&mut self) -> Result<(), confy::ConfyError> {
-        confy::store("io.github.meelees.screencap", None, Some("store"))
+    pub fn save(&self) -> Result<(), confy::ConfyError> {
+        confy::store_path(path(), self)
     }
+}
+
+fn path() -> PathBuf {
+    let base = std::env::var_os("XDG_STATE_HOME")
+        .map(PathBuf::from)
+        .filter(|p| p.is_absolute())
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/state")));
+    base.unwrap_or_default()
+        .join(constants::APP_NAME)
+        .join("store.toml")
 }

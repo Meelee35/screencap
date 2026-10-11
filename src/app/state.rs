@@ -78,6 +78,23 @@ impl From<Mode> for CaptureMode {
     }
 }
 
+impl From<&CaptureMode> for Mode {
+    fn from(mode: &CaptureMode) -> Self {
+        match mode {
+            CaptureMode::Fullscreen => Self::Fullscreen,
+            CaptureMode::Rectangle(_) => Self::Rectangle,
+        }
+    }
+}
+
+impl From<&AppState> for State {
+    fn from(app_state: &AppState) -> Self {
+        Self {
+            last_mode: (&app_state.mode).into(),
+        }
+    }
+}
+
 impl AppState {
     pub fn new(previous_state: &State) -> Self {
         Self {
@@ -117,7 +134,7 @@ impl AppState {
             output::save::save_capture(&save_dir, capture)?;
             save_types.push(SaveType::File(save_dir));
         }
-        if config.clipboard {
+        if config.clipboard.unwrap_or(false) {
             output::clipboard::copy_capture(capture)?;
             save_types.push(SaveType::Clipboard);
         }

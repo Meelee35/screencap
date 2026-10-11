@@ -2,12 +2,11 @@ use clap::Parser;
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
-#[command(version)]
 pub struct Args {
-    #[arg(short, long)]
+    #[arg(short, long, help = "where to save captures")]
     pub savedirectory: Option<PathBuf>,
-    #[arg(short, long)]
-    pub clipboard: bool,
+    #[arg(short, long, help = "whether to save captures to the clipboard")]
+    pub clipboard: Option<bool>,
 }
 
 pub fn args() -> Args {

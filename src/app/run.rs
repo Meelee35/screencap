@@ -1,7 +1,9 @@
 use crate::app::state::{AppState, CaptureMode, Rect, Rectangle};
+use crate::persistent::state::State;
 use crate::ui::main_window::MainWindowView;
 use crate::{capture, config, output, persistent};
 use std::cell::RefCell;
+use std::ops::Deref;
 use std::rc::Rc;
 
 pub fn run() -> anyhow::Result<()> {
@@ -96,6 +98,9 @@ pub fn run() -> anyhow::Result<()> {
             }
         }
     }
+
+    let final_state = app_state.borrow();
+    State::from(&*final_state).save()?;
 
     Ok(())
 }
