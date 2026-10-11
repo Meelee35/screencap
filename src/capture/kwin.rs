@@ -1,10 +1,10 @@
+use crate::capture::errors::CaptureError;
+use crate::capture::pixels::{Capture, RawCapture};
 use std::collections::HashMap;
 use std::io::Read;
 use std::os::fd::AsFd;
 use zbus::blocking::Connection;
 use zbus::zvariant::{Fd, OwnedValue, Value};
-use crate::capture::errors::CaptureError;
-use crate::capture::pixels::{Capture, RawCapture};
 
 pub fn capture() -> Result<Capture, CaptureError> {
     Ok(Capture::try_from(capture_workspace()?)?)

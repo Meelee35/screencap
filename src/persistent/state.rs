@@ -1,18 +1,17 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default)]
 #[serde(default)]
 pub struct State {
-    pub last_mode: Mode
+    pub last_mode: Mode,
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
 pub enum Mode {
     Fullscreen,
     #[default]
-    Rectangle
+    Rectangle,
 }
-
 
 pub fn load() -> Result<State, confy::ConfyError> {
     confy::load("io.github.meelees.screencap", Some("store"))

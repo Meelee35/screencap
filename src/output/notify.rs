@@ -1,10 +1,10 @@
+use crate::capture::pixels::Capture;
+use crate::constants;
+use notify_rust::{Hint, Notification};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Mutex, OnceLock};
 use std::thread::JoinHandle;
-use notify_rust::{Hint, Notification};
-use crate::capture::pixels::Capture;
-use crate::constants;
 
 static PENDING: OnceLock<Mutex<Vec<JoinHandle<()>>>> = OnceLock::new();
 static COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -76,7 +76,10 @@ fn downscale(image: &image::RgbaImage) -> image::RgbaImage {
 }
 
 fn show(mut notification: Notification) {
-    notification.hint(Hint::Custom("x-kde-show-when-inhibited".into(), "true".into()));
+    notification.hint(Hint::Custom(
+        "x-kde-show-when-inhibited".into(),
+        "true".into(),
+    ));
     let handle = std::thread::spawn(move || {
         if let Err(err) = notification.show() {
             err!("Failed to show notification: {err}");

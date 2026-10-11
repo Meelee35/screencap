@@ -1,7 +1,7 @@
-use std::path::Path;
+use crate::capture::pixels::Capture;
 use chrono::{DateTime, Local};
 use image::ImageError;
-use crate::capture::pixels::Capture;
+use std::path::Path;
 
 pub fn save_capture(dir: &Path, capture: &Capture) -> Result<(), ImageError> {
     let datetime: DateTime<Local> = capture.timestamp.into();

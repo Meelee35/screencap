@@ -1,5 +1,5 @@
-use std::process::Command;
 use crate::constants;
+use std::process::Command;
 
 pub fn error(message: &str) {
     err!("{message}");

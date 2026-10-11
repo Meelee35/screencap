@@ -2,14 +2,14 @@ use crate::logging::START;
 use std::process::ExitCode;
 #[macro_use]
 mod logging;
+pub mod app;
 pub mod capture;
 pub mod ui;
-pub mod app;
 
-pub mod output;
 pub mod config;
-pub mod persistent;
 pub mod constants;
+pub mod output;
+pub mod persistent;
 
 fn main() -> ExitCode {
     let mut code = 0;

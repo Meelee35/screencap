@@ -1,11 +1,13 @@
+use crate::capture::pixels::Capture;
+use anyhow::Context;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use anyhow::Context;
-use crate::capture::pixels::Capture;
 
 pub fn copy_capture(capture: &Capture) -> anyhow::Result<()> {
     let mut png = Vec::new();
-    capture.image.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)?;
+    capture
+        .image
+        .write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)?;
 
     let mut child = Command::new("wl-copy")
         .args(["--type", "image/png"])

@@ -1,8 +1,8 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-use crate::{capture, config, output, persistent};
 use crate::app::state::{AppState, CaptureMode, Rect, Rectangle};
 use crate::ui::main_window::MainWindowView;
+use crate::{capture, config, output, persistent};
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub fn run() -> anyhow::Result<()> {
     log!("Loading config");
@@ -28,7 +28,7 @@ pub fn run() -> anyhow::Result<()> {
             state.borrow_mut().mode = mode.into();
         }
     });
-    
+
     let cancel_state = state.clone();
     window.on_cancel_requested(move || {
         log!("Cancel requested");
@@ -52,7 +52,12 @@ pub fn run() -> anyhow::Result<()> {
         log!("Region requested");
         if let Some(state) = region_state.upgrade() {
             let mode = CaptureMode::Rectangle(Rectangle {
-                selection: Some(Rect { x, y, width: w, height: h }),
+                selection: Some(Rect {
+                    x,
+                    y,
+                    width: w,
+                    height: h,
+                }),
             });
             state.borrow_mut().mode = mode.clone();
             state.borrow().close();
@@ -66,7 +71,9 @@ pub fn run() -> anyhow::Result<()> {
     if let Some(action) = app_state.borrow().action_requested.clone() {
         let result = match action {
             CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(&config),
-            CaptureMode::Rectangle(rectangle) => app_state.borrow().capture_rectangle(&config, &rectangle),
+            CaptureMode::Rectangle(rectangle) => {
+                app_state.borrow().capture_rectangle(&config, &rectangle)
+            }
         };
 
         match result {

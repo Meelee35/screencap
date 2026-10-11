@@ -1,6 +1,6 @@
-use std::time::SystemTime;
-use image;
 use crate::capture::errors::ConversionError;
+use image;
+use std::time::SystemTime;
 
 #[derive(Debug)]
 pub struct RawCapture {

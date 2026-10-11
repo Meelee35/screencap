@@ -1,6 +1,6 @@
+use super::{CaptureMode, MainWindow};
 use crate::persistent::state::Mode;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer};
-use super::{CaptureMode, MainWindow};
 
 pub struct MainWindowView {
     window: MainWindow,
@@ -8,7 +8,7 @@ pub struct MainWindowView {
 
 #[derive(Clone)]
 pub(crate) struct ViewHandle {
-    window: slint::Weak::<MainWindow>
+    window: slint::Weak<MainWindow>,
 }
 
 impl ViewHandle {
@@ -31,7 +31,7 @@ impl MainWindowView {
 
     pub(crate) fn handle(&self) -> ViewHandle {
         ViewHandle {
-            window: self.window.as_weak()
+            window: self.window.as_weak(),
         }
     }
 

@@ -1,16 +1,16 @@
-use std::path::PathBuf;
 use crate::capture::pixels::Capture;
 use crate::config::Config;
 use crate::output;
 use crate::persistent::state::{Mode, State};
 use crate::ui::main_window::ViewHandle;
+use std::path::PathBuf;
 
 #[derive(Default)]
 pub struct AppState {
     pub capture: Capture,
     pub mode: CaptureMode,
     pub view: Option<ViewHandle>,
-    pub action_requested: Option<CaptureMode>
+    pub action_requested: Option<CaptureMode>,
 }
 
 #[derive(Clone, Debug)]
@@ -54,10 +54,10 @@ impl Saved {
         if types.is_empty() {
             return "".to_owned();
         }
-        
+
         types
             .iter()
-            .map(|savetype|savetype.into())
+            .map(|savetype| savetype.into())
             .collect::<Vec<String>>()
             .join(" and ")
     }
@@ -96,9 +96,15 @@ impl AppState {
         self.save(config, &self.capture)
     }
 
-    pub fn capture_rectangle(&self, config: &Config, rectangle: &Rectangle) -> anyhow::Result<Saved> {
+    pub fn capture_rectangle(
+        &self,
+        config: &Config,
+        rectangle: &Rectangle,
+    ) -> anyhow::Result<Saved> {
         if let Some(selection) = rectangle.selection {
-            let capture = self.capture.crop(selection.x, selection.y, selection.width, selection.height);
+            let capture =
+                self.capture
+                    .crop(selection.x, selection.y, selection.width, selection.height);
             self.save(config, &capture)
         } else {
             Ok(Saved(vec![]))
