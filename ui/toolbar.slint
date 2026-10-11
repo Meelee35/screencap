@@ -10,13 +10,17 @@ export component Toolbar inherits Rectangle {
     height: layout.preferred-height;
 
     background: Palette.background;
-    border-radius: 12px;
+    border-radius: 24px;
     border-width: 1px;
     border-color: Palette.border;
 
+    TouchArea {
+
+    }
+
     layout := HorizontalLayout {
-        padding: 8px;
-        spacing: 8px;
+        padding: 6px;
+        spacing: 4px;
 
         Button {
             text: "Rectangle";

@@ -2,24 +2,89 @@ import { Toolbar, CaptureMode } from "toolbar.slint";
 
 export component MainWindow inherits Window {
     in property <image> capture;
-    in-out property <CaptureMode> mode;
+    in-out property <CaptureMode> mode: CaptureMode.rectangle;
     callback mode-changed(CaptureMode);
+    callback cancel-requested;
+    callback capture-requested;
+    callback region-requested(length, length, length, length);
+
+    in-out property <bool> drag-active;
+    in-out property <length> drag-x;
+    in-out property <length> drag-y;
+    in-out property <length> drag-w;
+    in-out property <length> drag-h;
 
     full-screen: true;
     no-frame: true;
     background: black;
 
-    Image {
-        source: root.capture;
+    forward-focus: key-scope;
+
+    key-scope := FocusScope {
         width: 100%;
         height: 100%;
-        image-fit: fill;
-    }
 
-    Toolbar {
-        y: 24px;
-        x: (root.width - self.width) / 2;
-        mode-changed(m) => { root.mode-changed(m); }
-        mode: root.mode;
+        Image {
+            source: root.capture;
+            width: 100%;
+            height: 100%;
+            image-fit: fill;
+        }
+
+        Rectangle {
+            x: root.drag-x;
+            y: root.drag-y;
+            width: root.drag-w;
+            height: root.drag-h;
+            visible: root.drag-active;
+            border-width: 2px;
+            border-color: #2f81f7;
+            background: #2f81f733;
+        }
+
+        drag-area := TouchArea {
+            width: 100%;
+            height: 100%;
+
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && root.mode == CaptureMode.rectangle) {
+                    root.drag-active = true;
+                    root.drag-x = self.mouse-x;
+                    root.drag-y = self.mouse-y;
+                    root.drag-w = 0px;
+                    root.drag-h = 0px;
+                    key-scope.focus();
+                } else if (event.kind == PointerEventKind.up && root.drag-active) {
+                    root.drag-active = false;
+                    if (root.drag-w > 4px && root.drag-h > 4px) {
+                        root.region-requested(root.drag-x, root.drag-y, root.drag-w, root.drag-h);
+                    }
+                } else if (event.kind == PointerEventKind.cancel) {
+                    root.drag-active = false;
+                }
+            }
+
+            moved => {
+                if (root.drag-active) {
+                    root.drag-x = min(self.mouse-x, self.pressed-x);
+                    root.drag-y = min(self.mouse-y, self.pressed-y);
+                    root.drag-w = abs(self.mouse-x - self.pressed-x);
+                    root.drag-h = abs(self.mouse-y - self.pressed-y);
+                }
+            }
+
+            clicked => {
+                if (root.mode == CaptureMode.fullscreen) {
+                    root.capture-requested();
+                }
+            }
+        }
+
+        Toolbar {
+            y: 24px;
+            x: (root.width - self.width) / 2;
+            mode <=> root.mode;
+            mode-changed(m) => { root.mode-changed(m); }
+        }
     }
 }

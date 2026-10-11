@@ -12,6 +12,7 @@ pub struct RawCapture {
     pub scale: f64,
 }
 
+#[derive(Debug)]
 pub struct Capture {
     pub image: image::RgbaImage,
     pub scale: f64,

@@ -1,18 +1,20 @@
 use crate::capture::pixels::Capture;
 use crate::persistent::state::{Mode, State};
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct AppState {
     pub capture: Capture,
     pub mode: CaptureMode,
+    pub cancelled: bool,
 }
 
+#[derive(Debug)]
 pub enum CaptureMode {
     Fullscreen,
     Rectangle(Rectangle),
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Rectangle {
     pub selection: Option<Rect>,
 }

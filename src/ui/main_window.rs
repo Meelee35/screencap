@@ -26,9 +26,29 @@ impl MainWindowView {
     }
 
     pub fn on_mode_changed(&self, handler: impl Fn(Mode) + 'static) {
-        // TODO: window.on_mode_changed(...), mapping CaptureMode -> Mode inside the closure
-        todo!()
+        self.window.on_mode_changed(move |capture_mode| {
+            log!("Changing mode to {:?}", capture_mode);
+            let mode = match capture_mode {
+                CaptureMode::Rectangle => Mode::Rectangle,
+                CaptureMode::Fullscreen => Mode::Fullscreen,
+            };
 
+            handler(mode);
+        })
+    }
+
+    pub fn on_cancel_requested(&self, handler: impl Fn() + 'static) {
+        self.window.on_cancel_requested(move || handler());
+    }
+
+    pub fn on_capture_requested(&self, handler: impl Fn() + 'static) {
+        self.window.on_capture_requested(move || handler());
+    }
+
+    pub fn on_region_requested(&self, handler: impl Fn(f64, f64, f64, f64) + 'static) {
+        self.window.on_region_requested(move |x, y, w, h| {
+            handler(x as f64, y as f64, w as f64, h as f64);
+        });
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {

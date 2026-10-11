@@ -1,4 +1,7 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::{app, capture, config, persistent, ui};
+use crate::app::state::AppState;
 use crate::ui::main_window::MainWindowView;
 
 pub fn run() -> anyhow::Result<()> {
@@ -7,15 +10,28 @@ pub fn run() -> anyhow::Result<()> {
     log!("Loading state");
     let persistent_state = persistent::state::load().unwrap_or_default();
 
-    let mut app_state = app::state::AppState::new(&persistent_state);
+    let app_state = Rc::new(RefCell::new(AppState::new(&persistent_state)));
 
     log!("Capturing screen");
-    app_state.capture = capture::capture()?;
+    app_state.borrow_mut().capture = capture::capture()?;
+
     log!("Setting up window");
     let window = MainWindowView::new(persistent_state.last_mode)?;
-    window.set_capture(app_state.capture.image);
+    window.set_capture(app_state.borrow().capture.image.clone());
+    window.on_mode_changed(move |mode| {
+        app_state.borrow_mut().mode = mode.into();
+    });
+    window.on_cancel_requested(|| {
+        log!("Cancel requested");
+        window.close();
+        app_state.borrow_mut().cancelled = true;
+    });
+
     log!("Showing window");
     window.run()?;
+    if app_state.borrow().cancelled {
+        return Ok(())
+    }
 
     Ok(())
 }
