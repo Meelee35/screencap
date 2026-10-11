@@ -9,7 +9,7 @@ use std::path::PathBuf;
 pub struct AppState {
     pub capture: Capture,
     pub mode: CaptureMode,
-    pub(crate) view: Option<ViewHandle>,
+    pub view: Option<ViewHandle>,
     pub action_requested: Option<CaptureMode>,
 }
 
