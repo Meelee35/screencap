@@ -41,14 +41,50 @@ export component MainWindow inherits Window {
         }
 
         Rectangle {
+            x: 0;
+            y: 0;
+            width: root.width;
+            height: root.drag-y;
+            visible: root.drag-active;
+            background: #00000080;
+        }
+
+        Rectangle {
+            x: 0;
+            y: root.drag-y + root.drag-h;
+            width: root.width;
+            height: root.height - root.drag-y - root.drag-h;
+            visible: root.drag-active;
+            background: #00000080;
+        }
+
+        Rectangle {
+            x: 0;
+            y: root.drag-y;
+            width: root.drag-x;
+            height: root.drag-h;
+            visible: root.drag-active;
+            background: #00000080;
+        }
+
+        Rectangle {
+            x: root.drag-x + root.drag-w;
+            y: root.drag-y;
+            width: root.width - root.drag-x - root.drag-w;
+            height: root.drag-h;
+            visible: root.drag-active;
+            background: #00000080;
+        }
+
+        Rectangle {
             x: root.drag-x;
             y: root.drag-y;
             width: root.drag-w;
             height: root.drag-h;
             visible: root.drag-active;
             border-width: 2px;
-            border-color: #2f81f7;
-            background: #2f81f733;
+            border-color: white;
+            border-radius: 12px;
         }
 
         drag-area := TouchArea {

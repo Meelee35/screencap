@@ -56,14 +56,14 @@ impl TryFrom<RawCapture> for Capture {
 }
 
 fn format_16_17(mut buf: Vec<u8>) -> Vec<u8> {
-    for px in buf.chunks_exact_mut(4) {
+    for px in buf.as_chunks_mut::<4>().0 {
         px[3] = 255;
     }
     buf
 }
 
 fn format_6(mut buf: Vec<u8>) -> Vec<u8> {
-    for px in buf.chunks_exact_mut(4) {
+    for px in buf.as_chunks_mut::<4>().0 {
         px.swap(0, 2);
         let a = px[3];
         if a != 0 && a != 255 {

@@ -57,11 +57,11 @@ impl MainWindowView {
     }
 
     pub fn on_cancel_requested(&self, handler: impl Fn() + 'static) {
-        self.window.on_cancel_requested(move || handler());
+        self.window.on_cancel_requested(handler);
     }
 
     pub fn on_capture_requested(&self, handler: impl Fn() + 'static) {
-        self.window.on_capture_requested(move || handler());
+        self.window.on_capture_requested(handler);
     }
 
     pub fn on_region_requested(&self, handler: impl Fn(f64, f64, f64, f64) + 'static) {

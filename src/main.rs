@@ -1,6 +1,5 @@
-use std::any::Any;
 use crate::logging::START;
-use std::process::{ExitCode, ExitStatus};
+use std::process::ExitCode;
 #[macro_use]
 mod logging;
 pub mod capture;

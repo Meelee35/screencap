@@ -1,7 +1,8 @@
 use std::cell::RefCell;
+use std::path::PathBuf;
 use std::rc::Rc;
-use crate::{app, capture, config, persistent, ui};
-use crate::app::state::AppState;
+use crate::{capture, config, output, persistent};
+use crate::app::state::{AppState, SaveType};
 use crate::ui::main_window::MainWindowView;
 
 pub fn run() -> anyhow::Result<()> {
@@ -20,7 +21,7 @@ pub fn run() -> anyhow::Result<()> {
     window.set_capture(app_state.borrow().capture.image.clone());
 
     let state = Rc::downgrade(&app_state);
-    let view = window.handle();
+    app_state.borrow_mut().view = Some(window.handle());
 
     let mode_state = state.clone();
     window.on_mode_changed(move |mode| {
@@ -28,20 +29,53 @@ pub fn run() -> anyhow::Result<()> {
             state.borrow_mut().mode = mode.into();
         }
     });
-
+    
     let cancel_state = state.clone();
     window.on_cancel_requested(move || {
         log!("Cancel requested");
-        view.close();
         if let Some(state) = cancel_state.upgrade() {
-            state.borrow_mut().cancelled = true;
+            state.borrow().close();
+        }
+    });
+
+    let capture_state = state.clone();
+    window.on_capture_requested(move || {
+        log!("Capture requested");
+        if let Some(state) = capture_state.upgrade() {
+            state.borrow().close();
+            state.borrow_mut().requested_action.get_or_insert_with(Vec::new).push(SaveType::File(PathBuf::new()));
         }
     });
 
     log!("Showing window");
     window.run()?;
-    if app_state.borrow().cancelled {
-        return Ok(())
+
+    if let Some(actions) = &app_state.borrow().requested_action {
+        for action in actions {
+            match action {
+                SaveType::Clipboard => {
+                    todo!()
+                }
+                SaveType::File(_) => {
+                    match app_state.borrow().capture_fullscreen(&config) {
+                        Ok(saved) => {
+                            let save_types = &saved.0;
+                            if save_types.is_empty() {
+                                output::notify::warning("No save method was specified, so nothing was saved.")
+                            } else {
+                                let message = saved.build_summary();
+                                output::notify::success(&message, &app_state.borrow().capture);
+                            }
+                            output::notify::wait()
+                        }
+                        Err(e) => {
+                            output::dialogue::error(&format!("Failed to save screen: {:#}", e));
+                        }
+
+                    };
+                }
+            }
+        }
     }
 
     Ok(())

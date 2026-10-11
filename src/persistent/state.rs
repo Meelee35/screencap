@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use thiserror::Error;
 
 #[derive(Serialize, Deserialize, Default)]
 #[serde(default)]

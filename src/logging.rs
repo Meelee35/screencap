@@ -33,3 +33,19 @@ macro_rules! err {
         )
     };
 }
+
+macro_rules! warn {
+    () => {
+        eprintln!(
+            "[screencap:WARN] [{:>8.4}s]",
+            crate::START.get_or_init(std::time::Instant::now).elapsed().as_secs_f64()
+        )
+    };
+    ($($arg:tt)*) => {
+        eprintln!(
+            "[screencap:WARN] [{:>8.4}s] {}",
+            crate::START.get_or_init(std::time::Instant::now).elapsed().as_secs_f64(),
+            format_args!($($arg)*)
+        )
+    };
+}
