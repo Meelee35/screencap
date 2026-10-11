@@ -31,6 +31,6 @@ fn path() -> PathBuf {
         .filter(|p| p.is_absolute())
         .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/state")));
     base.unwrap_or_default()
-        .join(constants::APP_NAME)
+        .join(constants::APP_ID)
         .join("store.toml")
 }
