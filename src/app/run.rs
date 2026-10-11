@@ -77,7 +77,7 @@ pub fn run() -> anyhow::Result<()> {
         let result = match action {
             CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(&config),
             CaptureMode::Rectangle(rectangle) => {
-                app_state.borrow_mut().capture_rectangle(&config, &rectangle)
+                app_state.borrow().capture_rectangle(&config, &rectangle)
             }
         };
 
@@ -87,7 +87,7 @@ pub fn run() -> anyhow::Result<()> {
                     output::notify::warning("No save method was specified, so nothing was saved.")
                 } else {
                     let message = saved.build_summary();
-                    output::notify::success(&message, &app_state.borrow().capture);
+                    output::notify::success(&message);
                 }
                 output::notify::wait()
             }
