@@ -1,3 +1,4 @@
+// my IDE really doesn't want this import to be here. It claims its unused. But removing it breaks logging.
 use crate::logging::START;
 use std::process::ExitCode;
 #[macro_use]
