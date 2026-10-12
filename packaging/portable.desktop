@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Screencap
+Comment=Take screenshots of your desktop
+Exec=screencap --clipboard true --savedirectory $HOME/Pictures/Screenshots
+Icon=io.github.meelee35.screencap
+Terminal=false
+Categories=Graphics;Utility;
+StartupNotify=false
+X-KDE-DBUS-Restricted-Interfaces=org.kde.KWin.ScreenShot2
