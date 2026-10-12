@@ -2,6 +2,9 @@
 name = "screencap"
 version = "2026.10.1"
 edition = "2024"
+license = "GPL-3.0-only"
+description = "Take screenshots of your desktop"
+repository = "https://github.com/Meelee35/screencap"
 
 [dependencies]
 thiserror = "2.0.21"
@@ -19,6 +22,26 @@ url = "2.5.8"
 
 [build-dependencies]
 slint-build = "1"
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/screencap", dest = "/usr/bin/screencap", mode = "755" },
+    { source = "io.github.meelee35.screencap.desktop", dest = "/usr/share/applications/io.github.meelee35.screencap.desktop", mode = "644" },
+    { source = "assets/io.github.meelee35.screencap.svg", dest = "/usr/share/icons/hicolor/scalable/apps/io.github.meelee35.screencap.svg", mode = "644" },
+    { source = "LICENSE", dest = "/usr/share/licenses/screencap/LICENSE", mode = "644", doc = true },
+]
+
+[package.metadata.deb]
+maintainer = "Meelee35 <124620845+Meelee35@users.noreply.github.com>"
+copyright = "2026, Meelee35"
+license-file = ["LICENSE", "0"]
+section = "graphics"
+priority = "optional"
+assets = [
+    ["target/release/screencap", "usr/bin/", "755"],
+    ["io.github.meelee35.screencap.desktop", "usr/share/applications/", "644"],
+    ["assets/io.github.meelee35.screencap.svg", "usr/share/icons/hicolor/scalable/apps/", "644"],
+]
 
 [profile.dev.package."*"]
 opt-level = 3
