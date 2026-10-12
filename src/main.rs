@@ -26,6 +26,7 @@ fn main() -> ExitCode {
     };
 
     result.unwrap_or_else(|err| {
+        err!("{err:#}");
         output::dialogue::error(&err.to_string());
         code = 1;
     });
