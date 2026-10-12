@@ -13,7 +13,7 @@ pub fn run(config: &Config) -> anyhow::Result<()> {
     let app_state = Rc::new(RefCell::new(AppState::new(&persistent_state)));
 
     log!("Capturing screen");
-    app_state.borrow_mut().capture = capture::capture()?;
+    app_state.borrow_mut().capture = capture::capture()?.capture;
 
     log!("Setting up window");
     let window = MainWindowView::new(persistent_state.last_mode)?;

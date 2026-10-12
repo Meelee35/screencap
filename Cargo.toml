@@ -15,6 +15,7 @@ confy = "2.0.0"
 serde = { version = "1.0.229", features = ["derive"] }
 chrono = "0.4.45"
 notify-rust = { version = "4.18.2", features = ["images_no_default_features"] }
+url = "2.5.8"
 
 [build-dependencies]
 slint-build = "1"

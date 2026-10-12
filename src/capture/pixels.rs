@@ -1,16 +1,7 @@
 use crate::capture::errors::ConversionError;
+use crate::capture::kwin::RawCapture;
 use image;
 use std::time::SystemTime;
-
-#[derive(Debug)]
-pub struct RawCapture {
-    pub data: Vec<u8>,
-    pub width: u32,
-    pub height: u32,
-    pub stride: u32,
-    pub format: u32,
-    pub scale: f64,
-}
 
 #[derive(Debug)]
 pub struct Capture {

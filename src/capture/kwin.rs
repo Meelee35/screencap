@@ -1,13 +1,18 @@
 use crate::capture::errors::CaptureError;
-use crate::capture::pixels::{Capture, RawCapture};
 use std::collections::HashMap;
 use std::io::Read;
 use std::os::fd::AsFd;
 use zbus::blocking::Connection;
 use zbus::zvariant::{Fd, OwnedValue, Value};
 
-pub fn capture() -> Result<Capture, CaptureError> {
-    Ok(Capture::try_from(capture_workspace()?)?)
+#[derive(Debug)]
+pub struct RawCapture {
+    pub data: Vec<u8>,
+    pub width: u32,
+    pub height: u32,
+    pub stride: u32,
+    pub format: u32,
+    pub scale: f64,
 }
 
 pub fn capture_workspace() -> Result<RawCapture, CaptureError> {
@@ -22,13 +27,22 @@ pub fn capture_workspace() -> Result<RawCapture, CaptureError> {
     let mut options: HashMap<&str, Value> = HashMap::new();
     options.insert("native-resolution", true.into());
 
-    let reply = conn.call_method(
-        Some("org.kde.KWin.ScreenShot2"),
-        "/org/kde/KWin/ScreenShot2",
-        Some("org.kde.KWin.ScreenShot2"),
-        "CaptureWorkspace",
-        &(options, Fd::from(writer.as_fd())),
-    )?;
+    let reply = conn
+        .call_method(
+            Some("org.kde.KWin.ScreenShot2"),
+            "/org/kde/KWin/ScreenShot2",
+            Some("org.kde.KWin.ScreenShot2"),
+            "CaptureWorkspace",
+            &(options, Fd::from(writer.as_fd())),
+        )
+        .map_err(|e| match &e {
+            zbus::Error::MethodError(name, ..)
+                if name.as_str() == "org.kde.KWin.ScreenShot2.Error.NoAuthorized" =>
+            {
+                CaptureError::NotAuthorised
+            }
+            _ => CaptureError::DBus(e),
+        })?;
 
     drop(writer);
 

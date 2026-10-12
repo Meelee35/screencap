@@ -10,6 +10,14 @@ pub enum CaptureError {
     BadMetadata(String),
     #[error(transparent)]
     Conversion(#[from] ConversionError),
+    #[error("Not authorised")]
+    NotAuthorised,
+    #[error("Image error: {0}")]
+    Image(#[from] image::ImageError),
+    #[error("Screenshot cancelled")]
+    Cancelled,
+    #[error("Portal denied the screenshot request")]
+    PortalDenied,
 }
 
 #[derive(Debug, Error)]
