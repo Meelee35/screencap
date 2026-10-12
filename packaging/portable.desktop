@@ -2,7 +2,7 @@
 Type=Application
 Name=Screencap
 Comment=Take screenshots of your desktop
-Exec=screencap --clipboard true --savedirectory $HOME/Pictures/Screenshots
+Exec=screencap
 Icon=io.github.meelee35.screencap
 Terminal=false
 Categories=Graphics;Utility;

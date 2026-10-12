@@ -4,7 +4,9 @@ use std::path::PathBuf;
 
 pub fn load() -> Result<Config, confy::ConfyError> {
     if !exists() {
-        return Ok(Config::default());
+        let config = Config::default();
+        save(&config)?;
+        return Ok(config);
     }
     confy::load_path(path()?)
 }
