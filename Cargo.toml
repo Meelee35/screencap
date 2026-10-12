@@ -31,12 +31,17 @@ assets = [
     { source = "LICENSE", dest = "/usr/share/licenses/screencap/LICENSE", mode = "644", doc = true },
 ]
 
+[package.metadata.generate-rpm.recommends]
+wl-clipboard = "*"
+
 [package.metadata.deb]
 maintainer = "Meelee35 <124620845+Meelee35@users.noreply.github.com>"
 copyright = "2026, Meelee35"
 license-file = ["LICENSE", "0"]
 section = "graphics"
 priority = "optional"
+depends = "$auto"
+recommends = "wl-clipboard"
 assets = [
     ["target/release/screencap", "usr/bin/", "755"],
     ["io.github.meelee35.screencap.desktop", "usr/share/applications/", "644"],
