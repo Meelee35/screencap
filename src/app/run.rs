@@ -1,13 +1,12 @@
 use crate::app::state::{AppState, CaptureMode, Rect, Rectangle};
+use crate::config::Config;
 use crate::persistent::state::State;
 use crate::ui::main_window::MainWindowView;
-use crate::{capture, config, output, persistent};
+use crate::{capture, output, persistent};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub fn run() -> anyhow::Result<()> {
-    log!("Loading config");
-    let config = config::loader::load();
+pub fn run(config: &Config) -> anyhow::Result<()> {
     log!("Loading state");
     let persistent_state = persistent::state::load().unwrap_or_default();
 
@@ -76,9 +75,9 @@ pub fn run() -> anyhow::Result<()> {
 
     if let Some(action) = action {
         let result = match action {
-            CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(&config),
+            CaptureMode::Fullscreen => app_state.borrow().capture_fullscreen(config),
             CaptureMode::Rectangle(rectangle) => {
-                app_state.borrow().capture_rectangle(&config, &rectangle)
+                app_state.borrow().capture_rectangle(config, &rectangle)
             }
         };
 

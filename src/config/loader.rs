@@ -1,19 +1,15 @@
-use crate::config::{Config, cli, file};
+use crate::config::Config;
+use crate::config::cli::ConfigArgs;
+use crate::config::file;
 
-pub fn load() -> Config {
-    let args = cli::args();
-    let mut config = Config::default();
-    match file::load() {
-        Ok(cfg) => config = cfg,
+pub fn load(overrides: &ConfigArgs) -> Config {
+    let mut config = match file::load() {
+        Ok(config) => config,
         Err(err) => {
             warn!("Unable to load config file: {err}");
+            Config::default()
         }
-    }
-    if let Some(save_directory) = args.savedirectory {
-        config.save_directory = Some(save_directory);
-    }
-    if let Some(clipboard) = args.clipboard {
-        config.clipboard = Some(clipboard);
-    }
+    };
+    overrides.apply(&mut config);
     config
 }
