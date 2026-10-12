@@ -1,6 +1,6 @@
 use crate::app::state::{AppState, CaptureMode, Rect, Rectangle};
 use crate::config::Config;
-use crate::persistent::state::State;
+use crate::persistent::state::{Mode, State};
 use crate::ui::main_window::MainWindowView;
 use crate::{capture, output, persistent};
 use std::cell::RefCell;
@@ -16,7 +16,7 @@ pub fn run(config: &Config) -> anyhow::Result<()> {
     app_state.borrow_mut().capture = capture::capture()?.capture;
 
     log!("Setting up window");
-    let window = MainWindowView::new(persistent_state.last_mode)?;
+    let window = MainWindowView::new(Mode::Rectangle)?;
     window.set_capture(app_state.borrow().capture.image.clone());
 
     let state = Rc::downgrade(&app_state);
@@ -41,9 +41,8 @@ pub fn run(config: &Config) -> anyhow::Result<()> {
     window.on_capture_requested(move || {
         log!("Capture requested");
         if let Some(state) = capture_state.upgrade() {
-            let mode = state.borrow().mode.clone();
             state.borrow().close();
-            state.borrow_mut().action_requested = Some(mode);
+            state.borrow_mut().action_requested = Some(CaptureMode::Fullscreen);
         }
     });
 

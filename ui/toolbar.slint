@@ -6,6 +6,7 @@ export component Toolbar inherits Rectangle {
     in-out property <CaptureMode> mode: CaptureMode.rectangle;
     in property <bool> transparent;
     callback mode-changed(CaptureMode);
+    callback capture-requested;
 
     width: layout.preferred-width;
     height: layout.preferred-height;
@@ -33,7 +34,7 @@ export component Toolbar inherits Rectangle {
         Button {
             text: "Fullscreen";
             primary: root.mode == CaptureMode.fullscreen;
-            clicked => { root.mode = CaptureMode.fullscreen; root.mode-changed(root.mode); }
+            clicked => { root.capture-requested(); }
         }
     }
 }

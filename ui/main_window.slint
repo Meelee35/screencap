@@ -108,12 +108,6 @@ export component MainWindow inherits Window {
                     root.drag-h = abs(self.mouse-y - self.pressed-y);
                 }
             }
-
-            clicked => {
-                if (root.mode == CaptureMode.fullscreen) {
-                    root.capture-requested();
-                }
-            }
         }
 
         Toolbar {
@@ -122,6 +116,7 @@ export component MainWindow inherits Window {
             mode <=> root.mode;
             transparent: root.drag-active;
             mode-changed(m) => { root.mode-changed(m); }
+            capture-requested => { root.capture-requested(); }
         }
     }
 }
