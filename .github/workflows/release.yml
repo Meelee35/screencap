@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags: [ "*" ]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: Swatinem/rust-cache@v2
+    - name: Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libfontconfig1-dev
+    - name: Tools
+      run: cargo install cargo-generate-rpm cargo-deb --locked
+    - name: Build packages
+      run: ./packaging/build.sh
+    - name: Install deb
+      run: |
+        sudo apt-get install -y ./dist/*.deb
+        screencap --help
+    - name: Install rpm
+      run: |
+        docker run --rm -v "$PWD:/work" -w /work fedora:latest sh -c 'dnf install -y --nogpgcheck ./dist/*.rpm && screencap --help'
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          dist/*.rpm
+          dist/*.deb
+          dist/*.tar.gz
