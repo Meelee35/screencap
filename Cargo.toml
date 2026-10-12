@@ -1,6 +1,6 @@
 [package]
 name = "screencap"
-version = "2026.10.1"
+version = "2026.10.2"
 edition = "2024"
 license = "GPL-3.0-only"
 description = "Take screenshots of your desktop"
